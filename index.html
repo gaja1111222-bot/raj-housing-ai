@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Raj Housing AI – Smart Property Finder</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #111827;
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    padding: 25px 10px;
+}
+
+.header h1 {
+    margin-bottom: 8px;
+}
+
+.search-box {
+    background: #1f2937;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    resize: vertical;
+}
+
+button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #f97316;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #ea580c;
+}
+
+.card {
+    background: #1f2937;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.score {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.info {
+    line-height: 1.8;
+}
+
+.warning {
+    background: #374151;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.contact {
+    text-align: center;
+    margin-top: 25px;
+    padding: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>🏠 Raj Housing AI</h1>
+<p>Smart Property Finder & Lead Generation System</p>
+<p>Find Raj Housing properties using your requirements.</p>
+</div>
+
+<div class="search-box">
+
+<textarea id="requirement" rows="4"
+placeholder="Example: I want a 2 BHK in Mapusa around 60 lakh"></textarea>
+
+<button onclick="findProperties()">🔍 Find Properties</button>
+
+</div>
+
+<div id="results"></div>
+
+<div class="contact">
+<h3>📞 Need help?</h3>
+<p>Contact Raj Housing Sales</p>
+<p><b>9763719962 / 9011044394</b></p>
+</div>
+
+</div>
+
+<script>
+
+const properties = [{"Project Name": "Raj Durga Tower", "Status": "Ongoing", "Property Category": "Commercial", "Typology": "Shops; Offices", "Location": "Opposite Our Lady of Mount Carmel Chapel, Sadar, Ponda, Goa", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "PRGO not found on public project page", "Verified Details / Amenities / Notes": "Fully commercial building; spacious lobbies; 4 lifts; entry from Church side and Ground side; central Ponda location near schools, markets and hospitals.", "Sales Contact": "9763719962 / 9011044394", "Official Source": "https://rajhousinggoa.com/ongoing-projects/raj-durga-tower.php"}, {"Project Name": "Raj Elite", "Status": "Ongoing", "Property Category": "Residential + Commercial", "Typology": "3 BHK apartments; Shops; Offices", "Location": "Near Goa Urban Bank, Sadar, Ponda, Goa", "BHK / Unit Type": "3 BHK", "Price": "Not published", "Area": "Not published", "RERA Number": "PRGO09211424", "Verified Details / Amenities / Notes": "Nearby Municipal Garden, Bus Stand, Schools, Ponda Library, Hospitals, Banks, Market. Residential specifications/floor plans are listed on official page.", "Sales Contact": "9763719962 / 9011044394", "Official Source": "https://rajhousinggoa.com/ongoing-projects/raj-elite.php"}, {"Project Name": "Raj City Plaza", "Status": "Ongoing", "Property Category": "Residential + Commercial", "Typology": "2 BHK apartments; Shops; Offices", "Location": "Sadar, Ponda, Goa", "BHK / Unit Type": "2 BHK", "Price": "Not published", "Area": "Not published", "RERA Number": "PRGO03211299", "Verified Details / Amenities / Notes": "Nearby Bus Stand, Almeida High School, Hospitals, Banks, Market. Official page states specifications are provided for residential units.", "Sales Contact": "9763719962 / 9011044394", "Official Source": "https://rajhousinggoa.com/ongoing-projects/raj-city-plaza.php"}, {"Project Name": "Raj Enclave", "Status": "Ongoing", "Property Category": "Residential", "Typology": "2 BHK; 3 BHK flats", "Location": "Karaswada, Mapusa, Goa", "BHK / Unit Type": "2 BHK; 3 BHK", "Price": "Not published", "Area": "Not published", "RERA Number": "Phase 1: PRGO11190946; Phase 2: PRGO01200950", "Verified Details / Amenities / Notes": "Mopa Airport 16 km; Thivim Railway Station 7 km; Bus stand 3 km; beaches 13 km. Amenities include gym, pool, jogging park, badminton, table tennis, half basketball, clubhouse, party lawns, CCTV, 24-hour security, children's play area, garden, elevators, parking, sewage treatment and rainwater harvesting. 5 years maintenance.", "Sales Contact": "9763719962 / 9011044394", "Official Source": "https://rajhousinggoa.com/ongoing-projects/raj-enclave.php"}, {"Project Name": "Raj Ryle Residency", "Status": "Completed", "Property Category": "Residential + Commercial", "Typology": "Shops; 2 BHK; 3 BHK flats", "Location": "Acoi, Karaswada, Mapusa, Goa", "BHK / Unit Type": "2 BHK; 3 BHK", "Price": "Not published", "Area": "Not published", "RERA Number": "PRGO05180278", "Verified Details / Amenities / Notes": "Near Mapusa Industrial Estate, Panjim–Mumbai National Highway and Thivim Railway Station. Amenities: lift with power backup, rainwater harvesting, sewage treatment, common solar panels, video door phones, garden with swimming pool, clubhouse. Specifications include vitrified flooring, concealed copper wiring, granite frames, designer toilet tiles, compound wall, granite kitchen platform. Floor plans and home-loan information are on official page.", "Sales Contact": "9763719962 / 9011044394", "Official Source": "https://rajhousinggoa.com/completed-projects/raj-ryle-residency.php"}, {"Project Name": "Raj Durga Heritage", "Status": "Completed", "Property Category": "Residential + Commercial", "Typology": "Shops; 1 BHK apartments", "Location": "Dag, Ponda, Goa", "BHK / Unit Type": "1 BHK", "Price": "Not published", "Area": "Not published", "RERA Number": "PRGO08180273", "Verified Details / Amenities / Notes": "Near Water Department office, Ponda. Amenities: lift with power backup, gated complex, sewage treatment, parking in stilts, generator backup for common lighting. Specifications include vitrified flooring, premium bathroom fittings, powder-coated aluminium windows, designer toilet tiles, granite frames and granite kitchen platform with SS sink. Home-loan banks listed on official page.", "Sales Contact": "9011044394", "Official Source": "https://rajhousinggoa.com/completed-projects/raj-durga-heritage.php"}, {"Project Name": "Raj Harmony", "Status": "Completed", "Property Category": "Residential", "Typology": "2 BHK; 3 BHK flats", "Location": "Upper Bazar, Ponda, Goa", "BHK / Unit Type": "2 BHK; 3 BHK", "Price": "Not published", "Area": "Not published", "RERA Number": "PRGO05190738", "Verified Details / Amenities / Notes": "Near Kamat Nursing Home. Amenities: lift with power backup, gymnasium, intercom, gated complex, CCTV, children's play area, clubhouse, parking in stilts, generator backup for common lighting. Specifications include vitrified flooring, concealed copper wiring, branded switches, designer bathroom/toilet tiles, HDF Masonite door, granite toilet/bath frames, powder-coated aluminium windows. Floor plan available.", "Sales Contact": "9011044394", "Official Source": "https://rajhousinggoa.com/completed-projects/raj-harmony.php"}, {"Project Name": "Ganaraj Arcade", "Status": "Completed", "Property Category": "Commercial", "Typology": "Not published", "Location": "Upper Bazaar, Ponda, Goa; near Kamat Nursing Home", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official completed-project listing provides location only; detailed project page/specifications were not found in current public index.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Raj Aguiar Enclave", "Status": "Completed", "Property Category": "Residential", "Typology": "Not published", "Location": "Dhawali, Ponda, Goa", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official completed-project listing describes a quiet/cool Dhawali location with greenery and lawns. Detailed public project specifications were not found in current index.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Raj Madhurangan", "Status": "Completed", "Property Category": "Residential", "Typology": "Not published", "Location": "Mardol–Mangeshi area, Goa", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official completed-project listing describes scenic surroundings and proximity to Mardol–Mangeshi.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Raj Exellency", "Status": "Completed", "Property Category": "Residential", "Typology": "Not published", "Location": "Ribandar, Goa", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official listing describes a hilly Ribandar location overlooking the Mandovi River and Panjim city.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Rajdeep Galleria", "Status": "Completed", "Property Category": "Commercial", "Typology": "Not published", "Location": "Sadar, Ponda, Goa; opposite Municipality", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official listing describes a commercial project at Sadar Ponda opposite the Municipality.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Sairaj Residency", "Status": "Completed", "Property Category": "Residential", "Typology": "Not published", "Location": "Portvaddo, Siolim, Goa", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official completed-project listing provides location only.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Raj Braganca Residency", "Status": "Completed", "Property Category": "Residential", "Typology": "Not published", "Location": "Not published", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official completed-project listing says the building offers scenic beauty and a luxurious lifestyle; exact location/typology not published on the listing.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Raj Krishna Towers", "Status": "Completed", "Property Category": "Residential +?", "Typology": "Not published", "Location": "Shantinagar, Ponda, Goa; opposite Kamat Nursing Home", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official completed-project listing provides location only.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Raj Mudra", "Status": "Completed", "Property Category": "Residential", "Typology": "Not published", "Location": "Ponda, Goa", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official site lists the project as completed. Current public listing does not expose full technical details. Official testimonials mention possession in January 2016 and amenities such as swimming pool, clubhouse, gym and garden; these are testimonials, not a current specification sheet.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Raj Vatika", "Status": "Completed", "Property Category": "Villa", "Typology": "Villa", "Location": "Dabolim, Vasco, Goa; near airport road", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official listing identifies it as a villa near the airport road.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}, {"Project Name": "Sairaj Park", "Status": "Completed", "Property Category": "Row houses / bungalows", "Typology": "Twin bungalows; independent bungalows", "Location": "Not published", "BHK / Unit Type": "Not published", "Price": "Not published", "Area": "Not published", "RERA Number": "Not published on public project listing", "Verified Details / Amenities / Notes": "Official listing describes row houses, twin bungalows Jai-Jui and independent bungalows Kevda.", "Sales Contact": "Not published", "Official Source": "https://rajhousinggoa.com/completed-projects/"}];
+
+function extractBHK(text) {
+    let match = text.match(/\b([1-4])\s*bhk\b/i);
+    return match ? parseInt(match[1]) : null;
+}
+
+function extractLocation(text) {
+
+    const locations = [
+        "Mapusa",
+        "Ponda",
+        "Sadar",
+        "Panjim",
+        "Ribandar",
+        "Dabolim",
+        "Vasco",
+        "Siolim",
+        "Mardol",
+        "Mangeshi",
+        "Dhawali",
+        "Karaswada",
+        "Shantinagar",
+        "Portvaddo",
+        "Dag",
+        "Upper Bazar",
+        "Upper Bazaar"
+    ];
+
+    const lower = text.toLowerCase();
+
+    for (const location of locations) {
+        if (lower.includes(location.toLowerCase())) {
+            return location;
+        }
+    }
+
+    return null;
+}
+
+function findProperties() {
+
+    const text = document.getElementById("requirement").value.trim();
+    const resultsBox = document.getElementById("results");
+
+    if (!text) {
+        resultsBox.innerHTML =
+        "<div class='card'>⚠️ Please enter your property requirement.</div>";
+        return;
+    }
+
+    const bhk = extractBHK(text);
+    const location = extractLocation(text);
+
+    let results = [];
+
+    properties.forEach(row => {
+
+        let score = 0;
+        let reasons = [];
+
+        const project = row["Project Name"] || "";
+        const status = row["Status"] || "";
+        const category = row["Property Category"] || "";
+        const typology = row["Typology"] || "";
+        const propertyLocation = row["Location"] || "";
+        const bhkType = row["BHK / Unit Type"] || "";
+        const price = row["Price"] || "";
+
+        const combined =
+            (category + " " +
+             typology + " " +
+             propertyLocation + " " +
+             bhkType).toLowerCase();
+
+        if (bhk !== null) {
+
+            if (
+                combined.includes(bhk + " bhk") ||
+                (bhk === 2 && (
+                    combined.includes("2 & 3") ||
+                    combined.includes("2/3")
+                ))
+            ) {
+                score += 40;
+                reasons.push("✓ BHK requirement matches");
+            }
+        }
+
+        if (
+            location &&
+            combined.includes(location.toLowerCase())
+        ) {
+            score += 30;
+            reasons.push("✓ Location matches");
+        }
+
+        if (
+            /flat|apartment|residential/i.test(text) &&
+            /flat|apartment|residential/i.test(combined)
+        ) {
+            score += 15;
+            reasons.push("✓ Residential property matches");
+        }
+
+        if (
+            text.toLowerCase().includes("ongoing") &&
+            status.toLowerCase().includes("ongoing")
+        ) {
+            score += 15;
+            reasons.push("✓ Ongoing project matches");
+        }
+
+        if (score > 0) {
+            results.push({
+                score,
+                project,
+                status,
+                category,
+                typology,
+                propertyLocation,
+                bhkType,
+                price,
+                reasons
+            });
+        }
+    });
+
+    results.sort((a,b) => b.score - a.score);
+
+    if (results.length === 0) {
+
+        resultsBox.innerHTML = `
+        <div class="card">
+        <h2>🔎 No strong match found</h2>
+        <p>We could not find a strong match in the verified Raj Housing database.</p>
+        <p>Please try another location, BHK, or requirement.</p>
+        <p><b>Important:</b> We only show information verified from Raj Housing.</p>
+        </div>
+        `;
+
+        return;
+    }
+
+    let output =
+    "<h2 style='margin-top:25px;'>🏠 Recommended Properties</h2>";
+
+    results.slice(0,5).forEach(result => {
+
+        const priceText =
+            result.price.trim() === ""
+            ? "💰 Price: Not published"
+            : "💰 Price: " + result.price;
+
+        output += `
+        <div class="card">
+
+        <h2>🏠 ${result.project}</h2>
+
+        <div class="score">
+        Match Score: ${result.score}%
+        </div>
+
+        <div class="info">
+
+        📍 <b>Location:</b> ${result.propertyLocation}<br>
+
+        🏢 <b>Property Type:</b> ${result.category}<br>
+
+        🛏️ <b>BHK / Unit Type:</b> ${result.bhkType}<br>
+
+        📌 <b>Status:</b> ${result.status}<br>
+
+        ${priceText}
+
+        </div>
+
+        <p><b>Why this matches:</b></p>
+
+        <p>
+        ${result.reasons.length
+            ? result.reasons.join("<br>")
+            : "Verified project information available."
+        }
+        </p>
+
+        <p>
+        📞 <b>Contact Raj Housing:</b>
+        9763719962 / 9011044394
+        </p>
+
+        </div>
+        `;
+    });
+
+    output += `
+    <div class="warning">
+
+    <b>🔒 Information Accuracy</b><br><br>
+
+    Property information is shown only from the verified
+    Raj Housing database.
+
+    If price, area, RERA number or availability is not
+    officially published, it will not be guessed.
+
+    </div>
+    `;
+
+    resultsBox.innerHTML = output;
+}
+
+</script>
+
+</body>
+</html>
