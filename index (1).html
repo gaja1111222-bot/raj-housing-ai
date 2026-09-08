@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<title>Raj Housing AI – Smart Property Finder</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+    background: #0b1120;
+    color: #e5e7eb;
+}
+
+header {
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #172554
+        );
+    padding: 22px 16px;
+    border-bottom:
+        1px solid #334155;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.logo-title {
+    margin: 0;
+    font-size: 25px;
+    color: white;
+}
+
+.logo-title span {
+    color: #38bdf8;
+}
+
+.subtitle {
+    margin-top: 7px;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 22px 15px 50px 15px;
+}
+
+.hero {
+    background:
+        linear-gradient(
+            135deg,
+            #172554,
+            #111827
+        );
+    border:
+        1px solid #334155;
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 25px;
+}
+
+.hero h2 {
+    margin-top: 0;
+    color: white;
+}
+
+.hero p {
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.search-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#searchInput {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    border:
+        1px solid #475569;
+    background: #020617;
+    color: white;
+    font-size: 16px;
+    outline: none;
+}
+
+#searchInput:focus {
+    border-color: #38bdf8;
+}
+
+#searchButton {
+    padding: 15px 20px;
+    border: none;
+    border-radius: 10px;
+    background: #0284c7;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#searchButton:hover {
+    background: #0369a1;
+}
+
+.examples {
+    margin-top: 16px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.example-btn {
+    display: inline-block;
+    margin-top: 7px;
+    margin-right: 5px;
+    padding: 7px 10px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.section-title {
+    font-size: 22px;
+    margin:
+        25px 0
+        15px 0;
+    color: white;
+}
+
+.message-box {
+    display: none;
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.warning-message {
+    background: #3f1d1d;
+    border: 1px solid #ef4444;
+    color: #fecaca;
+}
+
+.info-message {
+    background: #172554;
+    border: 1px solid #3b82f6;
+    color: #dbeafe;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+}
+
+.property-card {
+    background: #111827;
+    border:
+        1px solid #334155;
+    border-radius: 16px;
+    overflow: hidden;
+    transition:
+        transform 0.2s,
+        border-color 0.2s;
+}
+
+.property-card:hover {
+    transform: translateY(-3px);
+    border-color: #38bdf8;
+}
+
+.photo-container {
+    width: 100%;
+    height: 230px;
+    background: #020617;
+    position: relative;
+    overflow: hidden;
+}
+
+.project-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.no-photo {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    text-align: center;
+    color: #94a3b8;
+    background:
+        linear-gradient(
+            135deg,
+            #1e293b,
+            #020617
+        );
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.65);
+    color: white;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.carousel-prev {
+    left: 10px;
+}
+
+.carousel-next {
+    right: 10px;
+}
+
+.photo-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.7);
+    padding: 5px 9px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+.card-content {
+    padding: 18px;
+}
+
+.card-title {
+    margin: 0;
+    color: white;
+    font-size: 22px;
+}
+
+.badges {
+    margin-top: 12px;
+}
+
+.badge {
+    display: inline-block;
+    margin:
+        3px 4px 3px 0;
+    padding: 6px 9px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.score-badge {
+    background: #064e3b;
+    color: #6ee7b7;
+}
+
+.ongoing-badge {
+    background: #172554;
+    color: #93c5fd;
+}
+
+.completed-badge {
+    background: #3f3f46;
+    color: #d4d4d8;
+}
+
+.availability-badge {
+    background: #3f2a06;
+    color: #fde68a;
+}
+
+.card-info {
+    margin-top: 15px;
+}
+
+.info-row {
+    padding: 9px 0;
+    border-bottom:
+        1px solid #1f2937;
+    font-size: 14px;
+}
+
+.info-label {
+    color: #94a3b8;
+}
+
+.info-value {
+    color: #f1f5f9;
+    display: block;
+    margin-top: 3px;
+    line-height: 1.45;
+}
+
+.match-box {
+    margin-top: 16px;
+    padding: 12px;
+    background: #172554;
+    border-radius: 10px;
+}
+
+.match-box strong {
+    color: #7dd3fc;
+}
+
+.match-reasons {
+    margin: 8px 0 0 18px;
+    padding: 0;
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+.alternative-label {
+    margin-top: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #3f2a06;
+    border: 1px solid #a16207;
+    color: #fde68a;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.card-links {
+    margin-top: 18px;
+}
+
+.project-link {
+    display: block;
+    padding: 11px;
+    margin-top: 8px;
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.official-link {
+    background: #0284c7;
+    color: white;
+}
+
+.official-link:hover {
+    background: #0369a1;
+}
+
+.no-link {
+    background: #1f2937;
+    color: #94a3b8;
+}
+
+.contact-box {
+    margin-top: 18px;
+    padding: 13px;
+    border-radius: 10px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    font-size: 14px;
+}
+
+.footer-note {
+    margin-top: 35px;
+    padding: 18px;
+    border-radius: 12px;
+    background: #111827;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.empty-results {
+    padding: 25px;
+    background: #111827;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+
+    header {
+        padding: 16px 13px;
+    }
+
+    .logo-title {
+        font-size: 20px;
+    }
+
+    .container {
+        padding: 16px 11px 40px 11px;
+    }
+
+    .hero {
+        padding: 18px;
+    }
+
+    .search-row {
+        flex-direction: column;
+    }
+
+    #searchButton {
+        width: 100%;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .photo-container {
+        height: 220px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<header>
+
+<div class="header-inner">
+
+<h1 class="logo-title">
+Raj Housing <span>AI</span>
+</h1>
+
+<div class="subtitle">
+Smart Property Finder & Lead Generation System
+</div>
+
+</div>
+
+</header>
+
+
+<div class="container">
+
+
+<section class="hero">
+
+<h2>Find Your Raj Housing Property</h2>
+
+<p>
+Tell us what you are looking for in simple language.
+For example: "I want a 2 BHK in Mapusa around 60 lakh."
+</p>
+
+<div class="search-row">
+
+<input
+id="searchInput"
+type="text"
+placeholder="Describe your property requirement..."
+>
+
+<button
+id="searchButton"
+onclick="searchProperties()"
+>
+Search
+</button>
+
+</div>
+
+
+<div class="examples">
+
+Try:
+
+<br>
+
+<button
+class="example-btn"
+onclick="useExample('I want a 2 BHK in Mapusa around 60 lakh')"
+>
+2 BHK in Mapusa
+</button>
+
+<button
+class="example-btn"
+onclick="useExample('I want a villa in Ponda')"
+>
+Villa in Ponda
+</button>
+
+<button
+class="example-btn"
+onclick="useExample('I want a 2 BHK in Madkai')"
+>
+2 BHK in Madkai
+</button>
+
+<button
+class="example-btn"
+onclick="useExample('I need an office in Ponda')"
+>
+Office in Ponda
+</button>
+
+</div>
+
+</section>
+
+
+<div
+id="messageBox"
+class="message-box"
+></div>
+
+
+<h2 class="section-title">
+Recommended Properties
+</h2>
+
+
+<div
+id="results"
+class="results-grid"
+></div>
+
+
+<div class="footer-note">
+
+<strong>Accuracy Notice:</strong>
+
+This property finder uses verified Raj Housing project info
+</div>
+
+</div>
+<script>
+    const projects = [{"name": "Raj Durga Tower", "status": "Ongoing", "category": "Commercial", "typology": "Shops; Offices", "location": "Opposite Our Lady of Mount Carmel Chapel, Sadar, Ponda, Goa", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "PRGO not found on public project page", "notes": "Fully commercial building; spacious lobbies; 4 lifts; entry from Church side and Ground side; central Ponda location near schools, markets and hospitals.", "contact": "9763719962 / 9011044394", "source": "https://rajhousinggoa.com/ongoing-projects/raj-durga-tower.php", "availability": "Available for Enquiry", "photos": ["https://www.rajhousinggoa.com/ongoing-projects/images/raj-durga-tower/webp/raj-durga-tower-1.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/raj-durga-tower/webp/raj-durga-tower-2.webp"]}, {"name": "Raj Elite", "status": "Ongoing", "category": "Residential + Commercial", "typology": "3 BHK apartments; Shops; Offices", "location": "Near Goa Urban Bank, Sadar, Ponda, Goa", "bhk": "3 BHK", "price": "Not published", "area": "Not published", "rera": "PRGO09211424", "notes": "Nearby Municipal Garden, Bus Stand, Schools, Ponda Library, Hospitals, Banks, Market. Residential specifications/floor plans are listed on official page.", "contact": "9763719962 / 9011044394", "source": "https://rajhousinggoa.com/ongoing-projects/raj-elite.php", "availability": "Available for Enquiry", "photos": ["https://www.rajhousinggoa.com/ongoing-projects/images/elite/project-images/1200/elite-day.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/elite/project-images/1200/elite-night.webp"]}, {"name": "Raj City Plaza", "status": "Ongoing", "category": "Residential + Commercial", "typology": "2 BHK apartments; Shops; Offices", "location": "Sadar, Ponda, Goa", "bhk": "2 BHK", "price": "Not published", "area": "Not published", "rera": "PRGO03211299", "notes": "Nearby Bus Stand, Almeida High School, Hospitals, Banks, Market. Official page states specifications are provided for residential units.", "contact": "9763719962 / 9011044394", "source": "https://rajhousinggoa.com/ongoing-projects/raj-city-plaza.php", "availability": "Available for Enquiry", "photos": ["https://www.rajhousinggoa.com/ongoing-projects/images/city-plaza/project-images/1200/city-plaza.webp"]}, {"name": "Raj Enclave", "status": "Ongoing", "category": "Residential", "typology": "2 BHK; 3 BHK flats", "location": "Karaswada, Mapusa, Goa", "bhk": "2 BHK; 3 BHK", "price": "Not published", "area": "Not published", "rera": "Phase 1: PRGO11190946; Phase 2: PRGO01200950", "notes": "Mopa Airport 16 km; Thivim Railway Station 7 km; Bus stand 3 km; beaches 13 km. Amenities include gym, pool, jogging park, badminton, table tennis, half basketball, clubhouse, party lawns, CCTV, 24-hour security, children's play area, garden, elevators, parking, sewage treatment and rainwater harvesting. 5 years maintenance.", "contact": "9763719962 / 9011044394", "source": "https://rajhousinggoa.com/ongoing-projects/raj-enclave.php", "availability": "Available for Enquiry", "photos": ["https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/birds-eye.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/badminton.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/bedroom.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/kitchen.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/living-room.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/living-room-2.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/gate.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/landscape.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/park.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/play-area.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/swimming"]}, {"name": "Raj Ryle Residency", "status": "Completed", "category": "Residential + Commercial", "typology": "Shops; 2 BHK; 3 BHK flats", "location": "Acoi, Karaswada, Mapusa, Goa", "bhk": "2 BHK; 3 BHK", "price": "Not published", "area": "Not published", "rera": "PRGO05180278", "notes": "Near Mapusa Industrial Estate, Panjim–Mumbai National Highway and Thivim Railway Station. Amenities: lift with power backup, rainwater harvesting, sewage treatment, common solar panels, video door phones, garden with swimming pool, clubhouse. Specifications include vitrified flooring, concealed copper wiring, granite frames, designer toilet tiles, compound wall, granite kitchen platform. Floor plans and home-loan information are on official page.", "contact": "9763719962 / 9011044394", "source": "https://rajhousinggoa.com/completed-projects/raj-ryle-residency.php", "availability": "Availability Not Published", "photos": ["https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-3.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-4.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-5.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-8.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/ryle-small-two.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/ryle-small-one.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-6.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-7.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-1.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-2.webp"]}, {"name": "Raj Durga Heritage", "status": "Completed", "category": "Residential + Commercial", "typology": "Shops; 1 BHK apartments", "location": "Dag, Ponda, Goa", "bhk": "1 BHK", "price": "Not published", "area": "Not published", "rera": "PRGO08180273", "notes": "Near Water Department office, Ponda. Amenities: lift with power backup, gated complex, sewage treatment, parking in stilts, generator backup for common lighting. Specifications include vitrified flooring, premium bathroom fittings, powder-coated aluminium windows, designer toilet tiles, granite frames and granite kitchen platform with SS sink. Home-loan banks listed on official page.", "contact": "9011044394", "source": "https://rajhousinggoa.com/completed-projects/raj-durga-heritage.php", "availability": "Availability Not Published", "photos": []}, {"name": "Raj Harmony", "status": "Completed", "category": "Residential", "typology": "2 BHK; 3 BHK flats", "location": "Upper Bazar, Ponda, Goa", "bhk": "2 BHK; 3 BHK", "price": "Not published", "area": "Not published", "rera": "PRGO05190738", "notes": "Near Kamat Nursing Home. Amenities: lift with power backup, gymnasium, intercom, gated complex, CCTV, children's play area, clubhouse, parking in stilts, generator backup for common lighting. Specifications include vitrified flooring, concealed copper wiring, branded switches, designer bathroom/toilet tiles, HDF Masonite door, granite toilet/bath frames, powder-coated aluminium windows. Floor plan available.", "contact": "9011044394", "source": "https://rajhousinggoa.com/completed-projects/raj-harmony.php", "availability": "Availability Not Published", "photos": []}, {"name": "Ganaraj Arcade", "status": "Completed", "category": "Commercial", "typology": "Not published", "location": "Upper Bazaar, Ponda, Goa; near Kamat Nursing Home", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official completed-project listing provides location only; detailed project page/specifications were not found in current public index.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": []}, {"name": "Raj Aguiar Enclave", "status": "Completed", "category": "Residential", "typology": "Not published", "location": "Dhawali, Ponda, Goa", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official completed-project listing describes a quiet/cool Dhawali location with greenery and lawns. Detailed public project specifications were not found in current index.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Available for Enquiry", "photos": ["https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/birds-eye.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/badminton.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/bedroom.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/kitchen.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/living-room.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/living-room-2.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/gate.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/landscape.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/park.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/play-area.webp", "https://www.rajhousinggoa.com/ongoing-projects/images/enclave/project-images/700/webp/swimming"]}, {"name": "Raj Madhurangan", "status": "Completed", "category": "Residential", "typology": "Not published", "location": "Mardol–Mangeshi area, Goa", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official completed-project listing describes scenic surroundings and proximity to Mardol–Mangeshi.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": []}, {"name": "Raj Exellency", "status": "Completed", "category": "Residential", "typology": "Not published", "location": "Ribandar, Goa", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official listing describes a hilly Ribandar location overlooking the Mandovi River and Panjim city.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": []}, {"name": "Rajdeep Galleria", "status": "Completed", "category": "Commercial", "typology": "Not published", "location": "Sadar, Ponda, Goa; opposite Municipality", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official listing describes a commercial project at Sadar Ponda opposite the Municipality.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": []}, {"name": "Sairaj Residency", "status": "Completed", "category": "Residential", "typology": "Not published", "location": "Portvaddo, Siolim, Goa", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official completed-project listing provides location only.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": []}, {"name": "Raj Braganca Residency", "status": "Completed", "category": "Residential", "typology": "Not published", "location": "Not published", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official completed-project listing says the building offers scenic beauty and a luxurious lifestyle; exact location/typology not published on the listing.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": ["https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-3.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-4.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-5.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-8.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/ryle-small-two.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/ryle-small-one.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-6.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-7.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-1.webp", "https://www.rajhousinggoa.com/completed-projects/images/ryle/project-images/700/raj-ryle-new-2.webp"]}, {"name": "Raj Krishna Towers", "status": "Completed", "category": "Residential +?", "typology": "Not published", "location": "Shantinagar, Ponda, Goa; opposite Kamat Nursing Home", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official completed-project listing provides location only.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": []}, {"name": "Raj Mudra", "status": "Completed", "category": "Residential", "typology": "Not published", "location": "Ponda, Goa", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official site lists the project as completed. Current public listing does not expose full technical details. Official testimonials mention possession in January 2016 and amenities such as swimming pool, clubhouse, gym and garden; these are testimonials, not a current specification sheet.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": []}, {"name": "Raj Vatika", "status": "Completed", "category": "Villa", "typology": "Villa", "location": "Dabolim, Vasco, Goa; near airport road", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official listing identifies it as a villa near the airport road.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": []}, {"name": "Sairaj Park", "status": "Completed", "category": "Row houses / bungalows", "typology": "Twin bungalows; independent bungalows", "location": "Not published", "bhk": "Not published", "price": "Not published", "area": "Not published", "rera": "Not published on public project listing", "notes": "Official listing describes row houses, twin bungalows Jai-Jui and independent bungalows Kevda.", "contact": "Not published", "source": "https://rajhousinggoa.com/completed-projects/", "availability": "Availability Not Published", "photos": []}];
+
+    // Store the matched projects for display
+    let matchedProjects = [];
+
+    function searchProperties() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const messageBox = document.getElementById('messageBox');
+        const resultsGrid = document.getElementById('results');
+
+        messageBox.style.display = 'none';
+        messageBox.className = 'message-box'; // Reset class
+
+        if (!query.trim()) {
+            messageBox.textContent = 'Please enter your property requirement.';
+            messageBox.classList.add('warning-message');
+            messageBox.style.display = 'block';
+            resultsGrid.innerHTML = ''; // Clear previous results
+            return;
+        }
+
+        // Simple keyword-based matching (this can be improved significantly)
+        matchedProjects = projects.map(project => {
+            let score = 0;
+            const reasons = [];
+            const projectText = JSON.stringify(project).toLowerCase();
+
+            // Basic keyword matching
+            if (projectText.includes(query)) {
+                score += 50; // Base score for any mention
+                reasons.push('Contains your search query');
+            }
+
+            // More specific matching (example for BHK, location)
+            // This is a simplified version; a real AI would parse the query
+            // and project data more intelligently.
+            if (query.includes('bhk') && project.bhk !== 'Not published' && query.includes(project.bhk.toLowerCase())) {
+                score += 30;
+                reasons.push(`Matches BHK type: ${project.bhk}`);
+            }
+            if (query.includes(project.location.toLowerCase())) {
+                score += 30;
+                reasons.push(`Matches location: ${project.location}`);
+            }
+            if (query.includes(project.status.toLowerCase())) {
+                score += 20;
+                reasons.push(`Matches status: ${project.status}`);
+            }
+            if (query.includes(project.category.toLowerCase())) {
+                score += 20;
+                reasons.push(`Matches category: ${project.category}`);
+            }
+
+            // Availability preference
+            if (query.includes('available') && project.availability.toLowerCase().includes('available')) {
+                score += 15;
+                reasons.push('Available for Enquiry');
+            } else if (query.includes('sold out') && project.availability.toLowerCase().includes('sold out')) {
+                 score += 15;
+                 reasons.push('Explicitly Sold Out');
+            }
+
+
+            // If no specific match but it's an ongoing project, give it a small boost
+            if (score === 0 && project.status.toLowerCase() === 'ongoing') {
+                score += 5;
+                reasons.push('Ongoing project (general interest)');
+            }
+
+            // Price matching (simplified)
+            const budgetMatch = query.match(/(\d+)\s*(lakh|lac|crore|cr)/);
+            if (budgetMatch) {
+                const amount = parseFloat(budgetMatch[1]);
+                const unit = budgetMatch[2];
+                let queryBudgetInLakh = amount;
+                if (unit === 'crore' || unit === 'cr') {
+                    queryBudgetInLakh = amount * 100;
+                }
+
+                if (project.price !== 'Not published') {
+                    const projectPriceMatch = project.price.match(/(\d+(\.\d+)?)\s*lakh/i);
+                    if (projectPriceMatch) {
+                        const projectPriceInLakh = parseFloat(projectPriceMatch[1]);
+                        if (projectPriceInLakh <= queryBudgetInLakh) {
+                            score += 25;
+                            reasons.push('Price within budget');
+                        } else {
+                            reasons.push('Price possibly above budget');
+                        }
+                    }
+                }
+            }
+
+
+            return { ...project, score, reasons };
+        })
+        .filter(project => project.score > 0) // Only show projects with a positive score
+        .sort((a, b) => b.score - a.score); // Sort by score descending
+
+        displayResults(matchedProjects);
+    }
+
+    function useExample(exampleText) {
+        document.getElementById('searchInput').value = exampleText;
+        searchProperties();
+    }
+
+    function displayResults(results) {
+        const resultsGrid = document.getElementById('results');
+        const messageBox = document.getElementById('messageBox');
+        resultsGrid.innerHTML = ''; // Clear previous results
+
+        if (results.length === 0) {
+            messageBox.innerHTML = '<p class="empty-results">⚠️ No properties match your current search. Try a different query or broader terms.</p>';
+            messageBox.style.display = 'block';
+            messageBox.className = 'message-box'; // Ensure no other classes interfere
+            return;
+        }
+
+        results.forEach((project, index) => {
+            const card = document.createElement('div');
+            card.className = 'property-card';
+
+            let photoSection = '';
+            let photoCounter = '';
+            let currentPhotoIndex = 0;
+
+            if (project.photos && project.photos.length > 0) {
+                photoSection = `
+                    <div class="photo-container" id="photo-container-${index}">
+                        <img src="${project.photos[0]}" alt="${project.name}" class="project-photo">
+                        ${project.photos.length > 1 ? `
+                            <button class="carousel-btn carousel-prev" onclick="changePhoto(${index}, -1)">&#10094;</button>
+                            <button class="carousel-btn carousel-next" onclick="changePhoto(${index}, 1)">&#10095;</button>
+                            <div class="photo-counter"><span id="current-photo-${index}">1</span> / ${project.photos.length}</div>
+                        ` : ''}
+                    </div>
+                `;
+            } else {
+                photoSection = `
+                    <div class="photo-container">
+                        <div class="no-photo">
+                            No Official Project Photo Published
+                        </div>
+                    </div>
+                `;
+            }
+
+            let scoreBadge = '';
+            if (project.score >= 80) {
+                scoreBadge = `<span class="badge score-badge">🔥 Excellent Match (${project.score}%)</span>`;
+            } else if (project.score >= 50) {
+                scoreBadge = `<span class="badge score-badge">⭐ Good Match (${project.score}%)</span>`;
+            } else if (project.score > 0) {
+                scoreBadge = `<span class="badge score-badge">👍 Possible Match (${project.score}%)</span>`;
+            }
+
+            let statusBadge = '';
+            if (project.status.toLowerCase() === 'ongoing') {
+                statusBadge = `<span class="badge ongoing-badge">🏗️ Ongoing</span>`;
+            } else if (project.status.toLowerCase() === 'completed') {
+                statusBadge = `<span class="badge completed-badge">✅ Completed</span>`;
+            }
+
+            let availabilityBadge = '';
+            if (project.availability.toLowerCase().includes('available for enquiry')) {
+                availabilityBadge = `<span class="badge availability-badge">📞 Available for Enquiry</span>`;
+            } else if (project.availability.toLowerCase().includes('sold out')) {
+                availabilityBadge = `<span class="badge completed-badge">🔴 Sold Out</span>`;
+            }
+
+
+            let reasonsHtml = '';
+            if (project.reasons && project.reasons.length > 0 && project.score > 0) {
+                reasonsHtml = `
+                    <div class="match-box">
+                        <strong>Why this project matches:</strong>
+                        <ul class="match-reasons">
+                            ${project.reasons.map(reason => `<li>${reason}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            let officialLink = '';
+            if (project.source && project.source !== 'Not published' && project.source.startsWith('http')) {
+                officialLink = `<a href="${project.source}" target="_blank" class="project-link official-link">View Official Source</a>`;
+            } else {
+                officialLink = `<div class="project-link no-link">Official Source Not Published</div>`;
+            }
+
+            card.innerHTML = `
+                ${photoSection}
+                <div class="card-content">
+                    <h3 class="card-title">${project.name}</h3>
+                    <div class="badges">
+                        ${scoreBadge}
+                        ${statusBadge}
+                        ${availabilityBadge}
+                    </div>
+                    <div class="card-info">
+                        <div class="info-row">
+                            <span class="info-label">Location:</span>
+                            <span class="info-value">${project.location}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Category:</span>
+                            <span class="info-value">${project.category}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Typology:</span>
+                            <span class="info-value">${project.typology}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">BHK / Unit Type:</span>
+                            <span class="info-value">${project.bhk}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Price:</span>
+                            <span class="info-value">${project.price}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Area:</span>
+                            <span class="info-value">${project.area}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">RERA Number:</span>
+                            <span class="info-value">${project.rera}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Notes:</span>
+                            <span class="info-value">${project.notes}</span>
+                        </div>
+                    </div>
+                    ${reasonsHtml}
+                    <div class="card-links">
+                        ${officialLink}
+                    </div>
+                    <div class="contact-box">
+                        📞 For latest price, availability & site visit:<br>
+                        <strong>${project.contact}</strong>
+                    </div>
+                </div>
+            `;
+            resultsGrid.appendChild(card);
+        });
+    }
+
+    // Carousel functionality
+    const projectPhotoIndices = {}; // To keep track of current photo for each project
+
+    function changePhoto(projectIndex, direction) {
+        const project = matchedProjects[projectIndex];
+        if (!project || !project.photos || project.photos.length <= 1) {
+            return;
+        }
+
+        let current = projectPhotoIndices[projectIndex] || 0;
+        current = (current + direction + project.photos.length) % project.photos.length;
+        projectPhotoIndices[projectIndex] = current;
+
+        const container = document.getElementById(`photo-container-${projectIndex}`);
+        const imgElement = container.querySelector('.project-photo');
+        const counterElement = document.getElementById(`current-photo-${projectIndex}`);
+
+        if (imgElement && counterElement) {
+            imgElement.src = project.photos[current];
+            counterElement.textContent = current + 1;
+        }
+    }
+
+    // Initial load: display all projects (or a subset)
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initially show all projects as "recommended" without a specific query
+        matchedProjects = projects.map(p => ({...p, score: 10, reasons: ['General recommendation']}));
+        matchedProjects.sort((a, b) => b.score - a.score); // Keep some order
+        displayResults(matchedProjects);
+    });
+
+</script>
+
+</body>
+</html>
